@@ -41,7 +41,7 @@ HWND HoverHit(POINT pt);        // hook thread, often while the mouse moves: sam
 void Refresh();                 // re-locate the buttons (main thread)
 bool NativePeekEnabled();       // Windows' own "Peek at desktop"
 void EndPeek(HWND button);      // end Windows' peek if hovering the button started it
-bool TurnOffPeek();             // switch Windows' peek off; true if it was on
+bool SetNativePeek(bool on, bool notify);  // switch Windows' peek; true if it changed. notify: tell Explorer now
 void Shutdown();
 }
 

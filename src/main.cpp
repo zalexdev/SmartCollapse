@@ -197,11 +197,37 @@ void AllowDarkMenu(HWND hwnd) {
 
 // ---- behavior ------------------------------------------------------------------------------------------
 
+// Windows' own "Peek at desktop" fades out the windows of every monitor, so it can't run alongside the
+// per-monitor one. SmartCollapse borrows it: switched off while its own peek works, and switched back on
+// once that stops (paused, peek turned off, exit), but only if SmartCollapse was the one that switched it
+// off. notify = false while the session ends: Explorer reads the setting again at the next sign-in.
+void BorrowWindowsPeek(bool borrow, bool notify = true) {
+    if (borrow) {
+        if (taskbar::SetNativePeek(false, notify)) {
+            WriteSetting(L"WindowsPeekBorrowed", 1);
+            Log(L"windows peek: borrowed");
+        }
+        return;
+    }
+    if (!ReadSetting(L"WindowsPeekBorrowed", 0)) return;
+    WriteSetting(L"WindowsPeekBorrowed", 0);
+    if (taskbar::NativePeekEnabled()) {
+        // Ticked again by hand in the meantime: Windows' peek is the one wanted, so ours stays off.
+        peek::SetEnabled(false);
+        WriteSetting(L"HoverPeek", 0);
+        Log(L"windows peek: turned back on by hand, hover peek off");
+    } else {
+        taskbar::SetNativePeek(true, notify);
+        Log(L"windows peek: given back");
+    }
+}
+
 void SetEnabled(bool enabled) {
     g_enabled = enabled;
     WriteSetting(L"Enabled", enabled);
     hook::SetActive(enabled);
     if (!enabled) peek::Hover(nullptr);
+    BorrowWindowsPeek(enabled && peek::Enabled());
     UpdateTray(false);
     Log(L"%ls", enabled ? L"enabled" : L"paused");
 }
@@ -209,7 +235,7 @@ void SetEnabled(bool enabled) {
 void SetPeek(bool enabled) {
     peek::SetEnabled(enabled);
     WriteSetting(L"HoverPeek", enabled);
-    if (enabled) taskbar::TurnOffPeek();  // Windows' own peek covers every monitor; both can't run at once
+    BorrowWindowsPeek(g_enabled && enabled);
 }
 
 void Escalate() {
@@ -393,7 +419,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         if (wParam == PBT_APMRESUMEAUTOMATIC && g_enabled) hook::SetActive(true);
         break;
     case WM_ENDSESSION:
-        if (wParam) RemoveTray();
+        if (wParam) {
+            RemoveTray();
+            BorrowWindowsPeek(false, false);  // the process ends without leaving the message loop
+        }
         return 0;
     case WM_DESTROY:
         RemoveTray();
@@ -516,13 +545,8 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int) {
     } else if (const std::wstring run = ReadRunValue(); !run.empty() && run != AutostartCommand()) {
         WriteRunValue();  // the exe was moved: keep autostart pointing at it
     }
-    // Windows' "Peek at desktop" fades out every window on every monitor while the cursor rests on the
-    // button. It's replaced by a per-monitor one: switch it off once; turning it back on is the user's call.
-    if (ReadSetting(L"PeekHandled", 0) == 0) {
-        Log(L"windows peek: %ls", taskbar::TurnOffPeek() ? L"turned off" : L"already off");
-        WriteSetting(L"PeekHandled", 1);
-    }
     peek::SetEnabled(ReadSetting(L"HoverPeek", 1) != 0);
+    BorrowWindowsPeek(g_enabled && peek::Enabled());
 
     desktop::Init();
     if (!hook::Start(g_window)) return 1;
@@ -547,6 +571,8 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int) {
     }
 
     hook::Stop();
+    // Before the mutex goes: an instance taking over (--replace) borrows it again only after this.
+    BorrowWindowsPeek(false);
     taskbar::Shutdown();
     if (g_shield) DeleteObject(g_shield);
     CoUninitialize();

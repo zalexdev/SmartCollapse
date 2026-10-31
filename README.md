@@ -79,9 +79,11 @@ goes back to normal rights and to the Run key.
 ## Good to know
 
 - Windows' own **Peek at desktop** fades out every window on every monitor while the cursor rests on the
-  button. SmartCollapse switches it off once, on first start, and does its per-monitor peek instead. If you
-  turn Windows' peek back on (right-click the button, then *Peek at desktop*), SmartCollapse leaves peeking
-  to Windows and ends it as soon as you click.
+  button. While its per-monitor peek is on, SmartCollapse switches Windows' peek off, and switches it back
+  on when you pause SmartCollapse, untick *Peek at desktop on hover* or exit (only if it was on before). If
+  you tick Windows' peek again yourself (right-click the button, then *Peek at desktop*), SmartCollapse
+  leaves peeking to Windows, ends it as soon as you click, and keeps its own peek off until you tick
+  *Peek at desktop on hover* again.
 - **Win+D** keeps its usual all-monitors behavior. Only the button changes.
 - Touch and pen taps on the button haven't been tested.
 
@@ -98,8 +100,8 @@ The output is `build\SmartCollapse.exe`. `tools\make-icons.ps1` regenerates the 
 ## Uninstall
 
 If it runs as admin, click **Running as admin** first. Then untick **Start with Windows**, choose **Exit**,
-and delete the exe. Settings live in `HKCU\Software\SmartCollapse`. To get Windows' peek back, right-click
-the Show desktop button and tick *Peek at desktop*.
+and delete the exe. Exiting also gives Windows' peek back if SmartCollapse switched it off. Settings live
+in `HKCU\Software\SmartCollapse`.
 
 ## Author
 

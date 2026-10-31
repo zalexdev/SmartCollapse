@@ -255,15 +255,16 @@ void EndPeek(HWND button) {
     if (button && ClassIs(button, kButtonClass) && NativePeekEnabled()) PostMessageW(button, WM_MOUSELEAVE, 0, 0);
 }
 
-bool TurnOffPeek() {
+bool SetNativePeek(bool on, bool notify) {
     // The same setting as "Peek at desktop" in the button's context menu.
-    if (!NativePeekEnabled()) return false;
-    const DWORD disabled = 1;
+    if (NativePeekEnabled() == on) return false;
+    const DWORD disabled = on ? 0 : 1;
     if (RegSetKeyValueW(HKEY_CURRENT_USER, kAdvancedKey, L"DisablePreviewDesktop", REG_DWORD, &disabled,
                         sizeof(disabled)) != ERROR_SUCCESS)
         return false;
-    SendMessageTimeoutW(HWND_BROADCAST, WM_SETTINGCHANGE, 0, reinterpret_cast<LPARAM>(L"TraySettings"), SMTO_ABORTIFHUNG,
-                        1000, nullptr);
+    if (notify)
+        SendMessageTimeoutW(HWND_BROADCAST, WM_SETTINGCHANGE, 0, reinterpret_cast<LPARAM>(L"TraySettings"),
+                            SMTO_ABORTIFHUNG, 1000, nullptr);
     return true;
 }
 
