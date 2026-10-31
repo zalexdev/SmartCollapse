@@ -1,0 +1,211 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" width="960" height="380" role="img" aria-labelledby="title desc">
+<title id="title">SmartCollapse: Show desktop, per monitor</title>
+<desc id="desc">Three monitors with open windows. Clicking the Show desktop button at the end of the right monitor's taskbar minimizes only that monitor's windows while the other monitors keep theirs. Clicking it again brings them back. Resting the cursor on the middle monitor's button peeks at that monitor's desktop only.</desc>
+<style>
+  text { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif; }
+  .a { animation-duration: 12s; animation-iteration-count: infinite; animation-timing-function: cubic-bezier(.45, 0, .25, 1); }
+  /* Without animation (reduced motion) the image shows the key moment: right monitor cleared. */
+  .cursor { transform: translate(909px, 252px) scale(1); animation-name: cursor; }
+  .ripple { transform-box: fill-box; transform-origin: center; opacity: 0; animation-name: ripple; }
+  .hl3 { opacity: 1; animation-name: hl3; }
+  .hl2 { opacity: 0; animation-name: hl2; }
+  .w3a { transform-origin: 675px 251px; opacity: 0; animation-name: w3a; }
+  .w3b { transform-origin: 687px 251px; opacity: 0; animation-name: w3b; }
+  .w3c { transform-origin: 699px 251px; opacity: 0; animation-name: w3c; }
+  .tb3 { opacity: .35; animation-name: tb3; }
+  .peek { opacity: 0; animation-name: peek; }
+  .c1, .c3, .c4 { opacity: 0; }
+  .c1 { animation-name: c1; } .c2 { animation-name: c2; } .c3 { animation-name: c3; } .c4 { animation-name: c4; }
+
+  @keyframes cursor {
+    0%, 8% { transform: translate(470px, 190px) scale(1); }
+    19%, 22% { transform: translate(909px, 252px) scale(1); }
+    22.8% { transform: translate(909px, 252px) scale(.8); }
+    23.8%, 47% { transform: translate(909px, 252px) scale(1); }
+    47.8% { transform: translate(909px, 252px) scale(.8); }
+    48.8%, 60% { transform: translate(909px, 252px) scale(1); }
+    69%, 86% { transform: translate(607px, 252px) scale(1); }
+    95%, 100% { transform: translate(470px, 190px) scale(1); }
+  }
+  @keyframes ripple {
+    0%, 22.4% { transform: scale(0); opacity: 0; }
+    22.8% { transform: scale(.15); opacity: .9; }
+    27% { transform: scale(1); opacity: 0; }
+    47.4% { transform: scale(0); opacity: 0; }
+    47.8% { transform: scale(.15); opacity: .9; }
+    52%, 100% { transform: scale(1); opacity: 0; }
+  }
+  @keyframes hl3 { 0%, 17% { opacity: 0; } 19%, 60% { opacity: 1; } 64%, 100% { opacity: 0; } }
+  @keyframes hl2 { 0%, 66% { opacity: 0; } 69%, 86% { opacity: 1; } 90%, 100% { opacity: 0; } }
+  @keyframes w3a {
+    0%, 23.6% { transform: scale(1); opacity: 1; }
+    27.5% { opacity: .85; }
+    29.5%, 48.6% { transform: scale(.05); opacity: 0; }
+    50.6% { opacity: .85; }
+    54.5%, 100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes w3b {
+    0%, 24.4% { transform: scale(1); opacity: 1; }
+    28.3% { opacity: .85; }
+    30.3%, 49.4% { transform: scale(.05); opacity: 0; }
+    51.4% { opacity: .85; }
+    55.3%, 100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes w3c {
+    0%, 25.2% { transform: scale(1); opacity: 1; }
+    29.1% { opacity: .85; }
+    31.1%, 50.2% { transform: scale(.05); opacity: 0; }
+    52.2% { opacity: .85; }
+    56.1%, 100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes tb3 { 0%, 25% { opacity: 1; } 29%, 50% { opacity: .35; } 54%, 100% { opacity: 1; } }
+  @keyframes peek { 0%, 74% { opacity: 0; } 77.5%, 86.5% { opacity: 1; } 90%, 100% { opacity: 0; } }
+  @keyframes c1 { 0%, 19.5% { opacity: 1; } 22%, 95% { opacity: 0; } 99%, 100% { opacity: 1; } }
+  @keyframes c2 { 0%, 21.5% { opacity: 0; } 24%, 44.5% { opacity: 1; } 47%, 100% { opacity: 0; } }
+  @keyframes c3 { 0%, 46.5% { opacity: 0; } 49%, 62% { opacity: 1; } 65%, 100% { opacity: 0; } }
+  @keyframes c4 { 0%, 64.5% { opacity: 0; } 67.5%, 87% { opacity: 1; } 90.5%, 100% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .a { animation: none; } }
+</style>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#161b22"/><stop offset="1" stop-color="#0d1117"/></linearGradient>
+  <linearGradient id="wp1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f766e"/><stop offset="1" stop-color="#1e3a8a"/></linearGradient>
+  <linearGradient id="wp2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6d28d9"/><stop offset="1" stop-color="#be185d"/></linearGradient>
+  <linearGradient id="wp3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1d4ed8"/><stop offset="1" stop-color="#0891b2"/></linearGradient>
+  <linearGradient id="ic" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#60a5fa"/><stop offset="1" stop-color="#2563eb"/></linearGradient>
+  <filter id="sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#000" flood-opacity=".35"/></filter>
+  <clipPath id="s1"><rect x="49" y="108" width="258" height="150"/></clipPath>
+  <clipPath id="s2"><rect x="351" y="108" width="258" height="150"/></clipPath>
+  <clipPath id="s3"><rect x="653" y="108" width="258" height="150"/></clipPath>
+  <clipPath id="above2"><rect x="351" y="108" width="258" height="136"/></clipPath>
+  <symbol id="ctl" viewBox="0 0 26 11" width="26" height="11">
+    <g fill="none" stroke="#fff" stroke-width="1" stroke-linecap="round" opacity=".9">
+      <path d="M2 5.5h4M18.5 3.5l4 4M22.5 3.5l-4 4"/><rect x="10" y="3.5" width="4" height="4" rx=".5"/>
+    </g>
+  </symbol>
+  <g id="icons" fill="#fff">
+    <rect width="12" height="10" rx="2" opacity=".85"/><rect x="-1" y="13" width="14" height="2" rx="1" opacity=".5"/>
+    <rect y="19" width="12" height="10" rx="2" opacity=".85"/><rect x="-1" y="32" width="14" height="2" rx="1" opacity=".5"/>
+    <rect y="38" width="12" height="10" rx="2" opacity=".85"/><rect x="-1" y="51" width="14" height="2" rx="1" opacity=".5"/>
+  </g>
+  <g id="desk2">
+    <rect x="351" y="108" width="258" height="150" fill="url(#wp2)"/>
+    <circle cx="560" cy="130" r="44" fill="#fff" opacity=".08"/><circle cx="420" cy="238" r="66" fill="#fff" opacity=".06"/>
+    <use href="#icons" x="359" y="116"/>
+  </g>
+</defs>
+
+<rect x=".5" y=".5" width="959" height="379" rx="18" fill="url(#bg)" stroke="#30363d"/>
+
+<!-- header -->
+<g transform="translate(34 18)">
+  <rect x=".5" y="2.5" width="31" height="21" rx="4" fill="#1e293b" stroke="#475569"/>
+  <rect x="3" y="5" width="26" height="16" rx="2" fill="url(#ic)"/>
+  <path d="M10.5 8.5l5.5 5 5.5-5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M10.5 17.5h11" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+  <rect x="13" y="24" width="6" height="3" fill="#64748b"/><rect x="9" y="27" width="14" height="3" rx="1.5" fill="#64748b"/>
+</g>
+<text x="78" y="40" font-size="22" font-weight="600" fill="#f0f6fc">SmartCollapse</text>
+<text x="78" y="61" font-size="13.5" fill="#8b949e">Show desktop for the monitor you click, not all of them</text>
+
+<!-- monitor 1 -->
+<rect x="41" y="100" width="274" height="166" rx="10" fill="#0f141c" stroke="#30363d"/>
+<path d="M166 266h24l3 14h-30z" fill="#1f2630"/><rect x="130" y="280" width="96" height="7" rx="3.5" fill="#1f2630"/>
+<g clip-path="url(#s1)">
+  <rect x="49" y="108" width="258" height="150" fill="url(#wp1)"/>
+  <circle cx="262" cy="134" r="46" fill="#fff" opacity=".07"/><circle cx="110" cy="244" r="70" fill="#fff" opacity=".05"/>
+  <use href="#icons" x="57" y="116"/>
+  <g filter="url(#sh)">
+    <rect x="62" y="118" width="150" height="92" rx="4" fill="#f6f8fa"/>
+    <path d="M62 122a4 4 0 0 1 4-4h142a4 4 0 0 1 4 4v7H62z" fill="#3b82f6"/><use href="#ctl" x="184" y="118"/>
+    <g fill="#d0d7de"><rect x="70" y="137" width="64" height="4" rx="2"/><rect x="70" y="147" width="122" height="4" rx="2"/><rect x="70" y="157" width="96" height="4" rx="2"/><rect x="70" y="167" width="110" height="4" rx="2"/><rect x="70" y="177" width="80" height="4" rx="2"/></g>
+  </g>
+  <g filter="url(#sh)">
+    <rect x="128" y="142" width="165" height="94" rx="4" fill="#f6f8fa"/>
+    <path d="M128 146a4 4 0 0 1 4-4h157a4 4 0 0 1 4 4v7H128z" fill="#10b981"/><use href="#ctl" x="265" y="142"/>
+    <g fill="#d0d7de"><rect x="136" y="161" width="70" height="9" rx="4.5"/><rect x="200" y="175" width="84" height="9" rx="4.5" fill="#a7f3d0"/><rect x="136" y="189" width="96" height="9" rx="4.5"/><rect x="216" y="203" width="68" height="9" rx="4.5" fill="#a7f3d0"/></g>
+  </g>
+  <rect x="49" y="244" width="258" height="14" fill="#0b1220" opacity=".92"/>
+  <rect x="55" y="247" width="8" height="8" rx="2" fill="#60a5fa"/>
+  <rect x="67" y="247" width="8" height="8" rx="2" fill="#3b82f6"/><rect x="79" y="247" width="8" height="8" rx="2" fill="#10b981"/>
+  <g fill="#9ca3af"><rect x="68" y="256" width="6" height="1.5" rx=".75"/><rect x="80" y="256" width="6" height="1.5" rx=".75"/></g>
+  <rect x="276" y="248" width="20" height="2.5" rx="1" fill="#9ca3af"/><rect x="280" y="252" width="12" height="2" rx="1" fill="#6b7280"/>
+  <rect x="302" y="244" width="1" height="14" fill="#475569"/>
+</g>
+
+<!-- monitor 2 -->
+<rect x="343" y="100" width="274" height="166" rx="10" fill="#0f141c" stroke="#30363d"/>
+<path d="M468 266h24l3 14h-30z" fill="#1f2630"/><rect x="432" y="280" width="96" height="7" rx="3.5" fill="#1f2630"/>
+<g clip-path="url(#s2)">
+  <use href="#desk2"/>
+  <g>
+    <rect x="351" y="108" width="258" height="136" fill="#f6f8fa"/>
+    <rect x="351" y="108" width="258" height="11" fill="#8b5cf6"/><use href="#ctl" x="581" y="108"/>
+    <rect x="359" y="124" width="200" height="7" rx="3.5" fill="#e5e7eb"/>
+    <rect x="359" y="138" width="118" height="44" rx="3" fill="#ddd6fe"/>
+    <g fill="#d0d7de"><rect x="485" y="140" width="110" height="4" rx="2"/><rect x="485" y="150" width="90" height="4" rx="2"/><rect x="485" y="160" width="104" height="4" rx="2"/><rect x="359" y="192" width="236" height="4" rx="2"/><rect x="359" y="202" width="200" height="4" rx="2"/><rect x="359" y="212" width="222" height="4" rx="2"/><rect x="359" y="222" width="170" height="4" rx="2"/></g>
+  </g>
+  <g filter="url(#sh)">
+    <rect x="430" y="132" width="130" height="84" rx="4" fill="#f6f8fa"/>
+    <path d="M430 136a4 4 0 0 1 4-4h122a4 4 0 0 1 4 4v7H430z" fill="#f59e0b"/><use href="#ctl" x="532" y="132"/>
+    <g fill="#d0d7de"><rect x="438" y="151" width="80" height="4" rx="2"/><rect x="438" y="161" width="104" height="4" rx="2"/><rect x="438" y="171" width="60" height="4" rx="2"/></g>
+    <rect x="502" y="196" width="48" height="12" rx="3" fill="#f59e0b"/>
+  </g>
+  <g class="a peek" clip-path="url(#above2)"><use href="#desk2"/></g>
+  <rect x="351" y="244" width="258" height="14" fill="#0b1220" opacity=".92"/>
+  <rect x="357" y="247" width="8" height="8" rx="2" fill="#60a5fa"/>
+  <rect x="369" y="247" width="8" height="8" rx="2" fill="#8b5cf6"/><rect x="381" y="247" width="8" height="8" rx="2" fill="#f59e0b"/>
+  <g fill="#9ca3af"><rect x="370" y="256" width="6" height="1.5" rx=".75"/><rect x="382" y="256" width="6" height="1.5" rx=".75"/></g>
+  <rect x="578" y="248" width="20" height="2.5" rx="1" fill="#9ca3af"/><rect x="582" y="252" width="12" height="2" rx="1" fill="#6b7280"/>
+  <rect x="604" y="244" width="1" height="14" fill="#475569"/>
+  <g class="a hl2"><rect x="598" y="241" width="17" height="20" rx="4" fill="#93c5fd" opacity=".3"/><rect x="605" y="244" width="4" height="14" fill="#e2e8f0"/></g>
+</g>
+
+<!-- monitor 3 -->
+<rect x="645" y="100" width="274" height="166" rx="10" fill="#0f141c" stroke="#30363d"/>
+<path d="M770 266h24l3 14h-30z" fill="#1f2630"/><rect x="734" y="280" width="96" height="7" rx="3.5" fill="#1f2630"/>
+<g clip-path="url(#s3)">
+  <rect x="653" y="108" width="258" height="150" fill="url(#wp3)"/>
+  <circle cx="860" cy="150" r="50" fill="#fff" opacity=".07"/><circle cx="720" cy="246" r="64" fill="#fff" opacity=".05"/>
+  <use href="#icons" x="661" y="116"/>
+  <g class="a w3a" filter="url(#sh)">
+    <rect x="664" y="118" width="142" height="88" rx="4" fill="#f6f8fa"/>
+    <path d="M664 122a4 4 0 0 1 4-4h134a4 4 0 0 1 4 4v7H664z" fill="#ef4444"/><use href="#ctl" x="778" y="118"/>
+    <g fill="#d0d7de"><rect x="672" y="137" width="58" height="4" rx="2"/><rect x="672" y="147" width="112" height="4" rx="2"/><rect x="672" y="157" width="90" height="4" rx="2"/><rect x="672" y="167" width="104" height="4" rx="2"/></g>
+  </g>
+  <g class="a w3b" filter="url(#sh)">
+    <rect x="740" y="134" width="158" height="96" rx="4" fill="#f6f8fa"/>
+    <path d="M740 138a4 4 0 0 1 4-4h150a4 4 0 0 1 4 4v7H740z" fill="#06b6d4"/><use href="#ctl" x="870" y="134"/>
+    <g fill="#cffafe"><rect x="748" y="153" width="42" height="30" rx="3"/><rect x="796" y="153" width="42" height="30" rx="3"/><rect x="844" y="153" width="42" height="30" rx="3"/></g>
+    <g fill="#d0d7de"><rect x="748" y="192" width="120" height="4" rx="2"/><rect x="748" y="202" width="96" height="4" rx="2"/><rect x="748" y="212" width="110" height="4" rx="2"/></g>
+  </g>
+  <g class="a w3c" filter="url(#sh)">
+    <rect x="690" y="178" width="112" height="58" rx="4" fill="#f6f8fa"/>
+    <path d="M690 182a4 4 0 0 1 4-4h104a4 4 0 0 1 4 4v7H690z" fill="#ec4899"/><use href="#ctl" x="774" y="178"/>
+    <g fill="#d0d7de"><rect x="698" y="197" width="70" height="4" rx="2"/><rect x="698" y="207" width="88" height="4" rx="2"/></g>
+    <rect x="748" y="219" width="44" height="10" rx="3" fill="#ec4899"/>
+  </g>
+  <rect x="653" y="244" width="258" height="14" fill="#0b1220" opacity=".92"/>
+  <rect x="659" y="247" width="8" height="8" rx="2" fill="#60a5fa"/>
+  <rect x="671" y="247" width="8" height="8" rx="2" fill="#ef4444"/><rect x="683" y="247" width="8" height="8" rx="2" fill="#06b6d4"/><rect x="695" y="247" width="8" height="8" rx="2" fill="#ec4899"/>
+  <g class="a tb3" fill="#9ca3af"><rect x="672" y="256" width="6" height="1.5" rx=".75"/><rect x="684" y="256" width="6" height="1.5" rx=".75"/><rect x="696" y="256" width="6" height="1.5" rx=".75"/></g>
+  <rect x="880" y="248" width="20" height="2.5" rx="1" fill="#9ca3af"/><rect x="884" y="252" width="12" height="2" rx="1" fill="#6b7280"/>
+  <rect x="906" y="244" width="1" height="14" fill="#475569"/>
+  <g class="a hl3"><rect x="900" y="241" width="17" height="20" rx="4" fill="#93c5fd" opacity=".3"/><rect x="907" y="244" width="4" height="14" fill="#e2e8f0"/></g>
+</g>
+<circle class="a ripple" cx="909" cy="251" r="16" fill="none" stroke="#fff" stroke-width="2"/>
+
+<!-- cursor (tip at its origin) -->
+<g class="a cursor">
+  <path d="M0 0v18.5l4.6-4.2 3 6.8 3-1.3-3-6.7h6.4z" fill="#fff" stroke="#0d1117" stroke-width="1.3" stroke-linejoin="round"/>
+</g>
+
+<!-- captions -->
+<g text-anchor="middle" font-size="17" fill="#e6edf3">
+  <text class="a c1" x="480" y="330">Click <tspan fill="#79c0ff" font-weight="600">Show desktop</tspan> on any monitor&#8230;</text>
+  <text class="a c2" x="480" y="330">&#8230;and only <tspan fill="#79c0ff" font-weight="600">that</tspan> monitor clears. The others stay as they are.</text>
+  <text class="a c3" x="480" y="330">Click again: every window comes back, in the same order and size.</text>
+  <text class="a c4" x="480" y="330">Rest the cursor on it to <tspan fill="#79c0ff" font-weight="600">peek</tspan> at that monitor's desktop only.</text>
+</g>
+<g fill="#30363d"><rect x="426" y="350" width="18" height="4" rx="2"/><rect x="456" y="350" width="18" height="4" rx="2"/><rect x="486" y="350" width="18" height="4" rx="2"/><rect x="516" y="350" width="18" height="4" rx="2"/></g>
+<g fill="#58a6ff"><rect class="a c1" x="426" y="350" width="18" height="4" rx="2"/><rect class="a c2" x="456" y="350" width="18" height="4" rx="2"/><rect class="a c3" x="486" y="350" width="18" height="4" rx="2"/><rect class="a c4" x="516" y="350" width="18" height="4" rx="2"/></g>
+</svg>
