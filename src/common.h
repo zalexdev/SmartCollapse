@@ -37,7 +37,7 @@ void Watchdog();  // reinstalls the hook if Windows silently dropped it
 namespace taskbar {
 bool IsTaskbar(HWND hwnd);
 HWND ShowDesktopHit(POINT pt);  // hook thread: the window under pt if it is a Show desktop button, or null
-HWND HoverHit(POINT pt);        // hook thread, every mouse move: same answer, from cached positions
+HWND HoverHit(POINT pt);        // hook thread, often while the mouse moves: same answer, from cached positions
 void Refresh();                 // re-locate the buttons (main thread)
 bool NativePeekEnabled();       // Windows' own "Peek at desktop"
 void EndPeek(HWND button);      // end Windows' peek if hovering the button started it

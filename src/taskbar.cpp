@@ -6,8 +6,9 @@
 // UI Automation where the button is, and the hook compares the click against that cached rectangle.
 // With classic taskbars the UI Automation code is never touched.
 //
-// Clicks are checked with WindowFromPoint. Hovering is checked on every mouse move, so it first compares
-// the point against the cached button rectangles and only confirms a match with WindowFromPoint.
+// Clicks are checked with WindowFromPoint. Hovering is checked many times a second while the mouse moves,
+// so it first compares the point against the cached button rectangles and only confirms a match with
+// WindowFromPoint.
 #include "common.h"
 #include <ole2.h>  // WIN32_LEAN_AND_MEAN leaves out the COM declarations UIAutomation.h relies on
 #include <UIAutomation.h>

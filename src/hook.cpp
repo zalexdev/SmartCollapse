@@ -11,6 +11,7 @@ namespace hook {
 namespace {
 
 enum : UINT { kInstall = WM_APP + 100, kRemove };
+constexpr UINT kHoverCheckMs = 10;
 
 HWND g_notify;
 HANDLE g_thread;
@@ -19,12 +20,33 @@ std::atomic<bool> g_active;
 
 // Hook thread only.
 HHOOK g_hook;
-HWND g_pressedButton;  // the button that received the press we swallowed
-HWND g_hoveredButton;  // the button under the cursor, as last reported to the main window
+HWND g_pressedButton;     // the button that received the press we swallowed
+HWND g_hoveredButton;     // the button under the cursor, as last reported to the main window
+UINT_PTR g_hoverTimer;    // ticks while the mouse moves
+bool g_movedSinceCheck;
 
-// Written by the hook, read by the watchdog.
+// Written by the hook thread, read by the watchdog.
 std::atomic<ULONGLONG> g_lastEventTick;
 std::atomic<LONG> g_lastX, g_lastY;
+
+// Every tick while the mouse moves, and once more after it stopped, when the cursor has settled.
+void CheckHover() {
+    if (!g_movedSinceCheck) {
+        KillTimer(nullptr, g_hoverTimer);
+        g_hoverTimer = 0;
+    }
+    g_movedSinceCheck = false;
+    POINT pt;
+    if (!GetCursorPos(&pt)) return;  // secure desktop
+    g_lastX.store(pt.x, std::memory_order_relaxed);
+    g_lastY.store(pt.y, std::memory_order_relaxed);
+    // Only entering and leaving a button is reported, for the per-monitor peek.
+    const HWND button = taskbar::HoverHit(pt);
+    if (button != g_hoveredButton) {
+        g_hoveredButton = button;
+        PostMessageW(g_notify, WM_APP_HOVER, reinterpret_cast<WPARAM>(button), 0);
+    }
+}
 
 LRESULT CALLBACK MouseProc(int code, WPARAM wParam, LPARAM lParam) {
     if (code == HC_ACTION) {
@@ -35,12 +57,12 @@ LRESULT CALLBACK MouseProc(int code, WPARAM wParam, LPARAM lParam) {
 
         if (info->dwExtraInfo != kSyntheticInputTag) {
             if (wParam == WM_MOUSEMOVE) {
-                // Only entering and leaving a button is reported, for the per-monitor peek.
-                const HWND button = taskbar::HoverHit(info->pt);
-                if (button != g_hoveredButton) {
-                    g_hoveredButton = button;
-                    PostMessageW(g_notify, WM_APP_HOVER, reinterpret_cast<WPARAM>(button), 0);
-                }
+                // A move reaches the hook before Windows keeps the cursor on the screen, so its point is where
+                // the mouse was headed, not where the cursor stops: pushed hard into the corner, it lies far
+                // outside the monitor while the cursor sits on the button. Hovering is checked against the
+                // real cursor position instead, a moment later.
+                g_movedSinceCheck = true;
+                if (!g_hoverTimer) g_hoverTimer = SetTimer(nullptr, 0, kHoverCheckMs, nullptr);
             } else if (wParam == WM_LBUTTONDOWN) {
                 g_pressedButton = nullptr;
                 // Shift+click keeps the original behavior (all monitors).
@@ -69,6 +91,9 @@ void Remove() {
         UnhookWindowsHookEx(g_hook);
         g_hook = nullptr;
     }
+    if (g_hoverTimer) KillTimer(nullptr, g_hoverTimer);
+    g_hoverTimer = 0;
+    g_movedSinceCheck = false;
     g_pressedButton = nullptr;
     if (g_hoveredButton) PostMessageW(g_notify, WM_APP_HOVER, 0, 0);  // nothing reports leaving it from now on
     g_hoveredButton = nullptr;
@@ -88,6 +113,7 @@ DWORD WINAPI ThreadMain(void* ready) {
     while (GetMessageW(&msg, nullptr, 0, 0) > 0) {
         if (msg.message == kInstall) Install();
         else if (msg.message == kRemove) Remove();
+        else if (msg.message == WM_TIMER && g_hoverTimer && msg.wParam == g_hoverTimer) CheckHover();  // not a stale one
     }
     Remove();
     return 0;
